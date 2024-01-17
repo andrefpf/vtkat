@@ -27,7 +27,9 @@ class InteractorStyleArcballCamera(vtk.vtkInteractorStyleTrackballCamera):
         self.AddObserver("MouseWheelForwardEvent", self.mouse_wheel_forward_event)
         self.AddObserver("MouseWheelBackwardEvent", self.mouse_wheel_backward_event)
         self.AddObserver("MiddleButtonPressEvent", self.click_mid_button_press_event)
-        self.AddObserver("MiddleButtonReleaseEvent", self.click_mid_button_release_event)
+        self.AddObserver(
+            "MiddleButtonReleaseEvent", self.click_mid_button_release_event
+        )
 
     def click_mid_button_press_event(self, obj, event):
         int_pos = self.GetInteractor().GetEventPosition()
@@ -142,7 +144,9 @@ class InteractorStyleArcballCamera(vtk.vtkInteractorStyleTrackballCamera):
             return
 
         rwi = self.GetInteractor()
-        delta_mouse = np.array(rwi.GetEventPosition()) - np.array(rwi.GetLastEventPosition())
+        delta_mouse = np.array(rwi.GetEventPosition()) - np.array(
+            rwi.GetLastEventPosition()
+        )
         size = np.array(renderer.GetRenderWindow().GetSize())
         motion_factor = 10
         elevation_azimuth = -20 / size
