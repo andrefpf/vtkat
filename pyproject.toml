@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "vtkit"
+name = "vtkat"
 version = "0.1.0"
 description = ""
 authors = ["André Fernandes <fpf.andre@gmail.com>"]
