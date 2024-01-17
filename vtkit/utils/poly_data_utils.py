@@ -1,7 +1,7 @@
 import vtk
 
 
-def paint_data(data: vtk.vtkPolyData, color: tuple):
+def set_polydata_colors(data: vtk.vtkPolyData, color: tuple):
     n_cells = data.GetNumberOfCells()
     cell_colors = vtk.vtkUnsignedCharArray()
     cell_colors.SetName("colors")
