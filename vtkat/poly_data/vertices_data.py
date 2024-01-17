@@ -7,6 +7,8 @@ class VerticesData(vtk.vtkPolyData):
     """
 
     def __init__(self, points_list: list[tuple[int, int, int]]) -> None:
+        super().__init__()
+
         points = vtk.vtkPoints()
         self.Allocate(len(points_list))
 
