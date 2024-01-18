@@ -3,16 +3,23 @@ import vtk
 from vtkat.poly_data import VerticesData
 
 
-class VerticesActor(vtk.vtkActor):
+class SquarePointsActor(vtk.vtkActor):
     def __init__(self, points) -> None:
         super().__init__()
         self.points = points
+        self._create_geometry()
 
     def _create_geometry(self):
         data = VerticesData(self.points)
         mapper = vtk.vtkPolyDataMapper()
         mapper.SetInputData(data)
         self.SetMapper(mapper)
+
+        self.GetProperty().SetPointSize(20)
+        self.GetProperty().LightingOff()
+
+    def set_size(self, size):
+        self.GetProperty().SetPointSize(size)
 
     def appear_in_front(self, cond: bool):
         # this offset is the Z position of the camera buffer.
