@@ -5,7 +5,7 @@ from PyQt5.QtWidgets import QFrame, QStackedLayout
 from vtk.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
 from vtk.util.numpy_support import vtk_to_numpy
 
-from vtkat.interactor_styles import InteractorStyleArcballCamera
+from vtkat.interactor_styles import ArcballCameraInteractorStyle
 
 
 class CommonRenderWidget(QFrame):
@@ -22,7 +22,7 @@ class CommonRenderWidget(QFrame):
         super().__init__(parent)
 
         self.renderer = vtk.vtkRenderer()
-        self.interactor_style = InteractorStyleArcballCamera()
+        self.interactor_style = ArcballCameraInteractorStyle()
         self.render_interactor = QVTKRenderWindowInteractor(self)
 
         self.render_interactor.Initialize()
