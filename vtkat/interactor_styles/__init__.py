@@ -1,1 +1,1 @@
-from .arcball_camera import vtkInteractorStyleArcballCamera
+from .arcball_camera import InteractorStyleArcballCamera
