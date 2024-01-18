@@ -1,6 +1,8 @@
 import numpy as np
 import vtk
 
+from vtkat.actors import RoundPointsActor
+
 
 class InteractorStyleArcballCamera(vtk.vtkInteractorStyleTrackballCamera):
     """
@@ -18,14 +20,15 @@ class InteractorStyleArcballCamera(vtk.vtkInteractorStyleTrackballCamera):
         self.is_rotating = False
         self.is_panning = False
 
-        self.center_of_rotation_actor = self._make_rotation_sphere()
+        # cor = center of rotation
+        self.cor_actor = self._make_default_cor_actor()
         self._create_observers()
 
     def set_default_center_of_rotation(self, center):
         self.default_center_of_rotation = center
     
-    def set_center_of_rotation_actor(self, actor):
-        self.center_of_rotation_actor = actor
+    def set_cor_actor(self, actor):
+        self.cor_actor = actor
 
     def _create_observers(self):
         self.AddObserver("LeftButtonPressEvent", self._left_button_press_event)
@@ -78,17 +81,17 @@ class InteractorStyleArcballCamera(vtk.vtkInteractorStyleTrackballCamera):
         dx, dy, dz = np.array(camera.GetPosition()) - np.array(camera.GetFocalPoint())
         distance_factor = np.sqrt(dx**2 + dy**2 + dz**2)
 
-        self.center_of_rotation_actor.SetPosition(self.center_of_rotation)
-        self.center_of_rotation_actor.SetScale(
+        self.cor_actor.SetPosition(self.center_of_rotation)
+        self.cor_actor.SetScale(
             (distance_factor / 3.5, distance_factor / 3.5, distance_factor / 3.5)
         )
-        renderer.AddActor(self.center_of_rotation_actor)
+        renderer.AddActor(self.cor_actor)
 
     def _right_button_release_event(self, obj, event):
         self.is_right_clicked = False
         self.is_rotating = False
         renderer = self.GetDefaultRenderer() or self.GetCurrentRenderer()
-        renderer.RemoveActor(self.center_of_rotation_actor)
+        renderer.RemoveActor(self.cor_actor)
         self.GetInteractor().Render()
         self.EndDolly()
 
@@ -259,15 +262,9 @@ class InteractorStyleArcballCamera(vtk.vtkInteractorStyleTrackballCamera):
         scale = view_height / renderer.GetSize()[1]
         return cursor_to_center * scale * (1 - 1 / factor)
 
-    def _make_rotation_sphere(self):
-        sphereSource = vtk.vtkSphereSource()
-        sphereSource.SetRadius(0.01)
-        sphereSource.Update()
-
-        mapper = vtk.vtkPolyDataMapper()
-        mapper.SetInputData(sphereSource.GetOutput())
-
-        sphere_actor = vtk.vtkActor()
-        sphere_actor.SetMapper(mapper)
-        sphere_actor.GetProperty().SetColor([1,0,0])
-        return sphere_actor
+    def _make_default_cor_actor(self):
+        actor = RoundPointsActor([(0,0,0)])
+        actor.appear_in_front(True)
+        actor.GetProperty().SetColor(1,0,0)
+        actor.GetProperty().SetPointSize(10)
+        return actor
