@@ -5,9 +5,7 @@ from PyQt5.QtWidgets import QFrame, QStackedLayout
 from vtk.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
 from vtk.util.numpy_support import vtk_to_numpy
 
-from vtkat.interactor_styles import vtkInteractorStyleArcballCamera
-
-# from vibra.utils.interface_functions import get_main_window
+from vtkat.interactor_styles import InteractorStyleArcballCamera
 
 
 class CommonRenderWidget(QFrame):
@@ -24,7 +22,7 @@ class CommonRenderWidget(QFrame):
         super().__init__(parent)
 
         self.renderer = vtk.vtkRenderer()
-        self.interactor_style = vtkInteractorStyleArcballCamera()
+        self.interactor_style = InteractorStyleArcballCamera()
         self.render_interactor = QVTKRenderWindowInteractor(self)
 
         self.render_interactor.Initialize()
@@ -42,6 +40,8 @@ class CommonRenderWidget(QFrame):
         layout = QStackedLayout()
         layout.addWidget(self.render_interactor)
         self.setLayout(layout)
+
+        self.set_theme("dark")
 
     def update_plot(self):
         raise NotImplementedError("The function update_plot was not implemented")
