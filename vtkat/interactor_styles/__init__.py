@@ -1,1 +1,2 @@
 from .arcball_camera import InteractorStyleArcballCamera
+from .box_selection_style import BoxSelectionInteractorStyle
