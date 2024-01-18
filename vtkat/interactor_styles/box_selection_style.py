@@ -1,11 +1,11 @@
 import vtk
 import numpy as np
-from .arcball_camera import InteractorStyleArcballCamera
+from .arcball_camera_style import ArcballCameraInteractorStyle
 
 
-class BoxSelectionInteractorStyle(InteractorStyleArcballCamera):
+class BoxSelectionInteractorStyle(ArcballCameraInteractorStyle):
     def __init__(self) -> None:
-        InteractorStyleArcballCamera.__init__(self)
+        ArcballCameraInteractorStyle.__init__(self)
 
         self.is_selecting = False
         self._click_position = (0, 0)

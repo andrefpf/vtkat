@@ -4,7 +4,7 @@ import vtk
 from vtkat.actors import RoundPointsActor
 
 
-class InteractorStyleArcballCamera(vtk.vtkInteractorStyleTrackballCamera):
+class ArcballCameraInteractorStyle(vtk.vtkInteractorStyleTrackballCamera):
     """
     Interactor style that rotates and zooms around the cursor.
     """
