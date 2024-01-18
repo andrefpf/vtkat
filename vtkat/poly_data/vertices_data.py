@@ -12,8 +12,8 @@ class VerticesData(vtk.vtkPolyData):
         points = vtk.vtkPoints()
         self.Allocate(len(points_list))
 
-        for i, point in enumerate(points_list):
-            points.InsertNextPoint(*point.coords())
+        for i, (x, y, z) in enumerate(points_list):
+            points.InsertNextPoint(x, y, z)
             self.InsertNextCell(vtk.VTK_VERTEX, 1, [i])
 
         self.SetPoints(points)
