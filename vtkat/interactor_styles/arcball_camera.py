@@ -10,54 +10,51 @@ class InteractorStyleArcballCamera(vtk.vtkInteractorStyleTrackballCamera):
     def __init__(self):
         self.center_of_rotation = None
         self.default_center_of_rotation = None
-        self._leftButtonClicked = False
-        self._rightButtonClicked = False
-        self._rotating = False
-        self.picker = vtk.vtkPropPicker()
+
+        self.is_left_clicked = False
+        self.is_right_clicked = False
+        self.is_mid_clicked = False
+
+        self.is_rotating = False
         self.is_panning = False
-        self.make_rotation_sphere()
-        self.create_observers()
 
-    def create_observers(self):
-        self.AddObserver("LeftButtonPressEvent", self.left_button_press_event)
-        self.AddObserver("LeftButtonReleaseEvent", self.left_button_release_event)
-        self.AddObserver("RightButtonPressEvent", self.right_button_press_event)
-        self.AddObserver("RightButtonReleaseEvent", self.right_button_release_event)
-        self.AddObserver("MouseMoveEvent", self.mouse_move_event)
-        self.AddObserver("MouseWheelForwardEvent", self.mouse_wheel_forward_event)
-        self.AddObserver("MouseWheelBackwardEvent", self.mouse_wheel_backward_event)
-        self.AddObserver("MiddleButtonPressEvent", self.click_mid_button_press_event)
-        self.AddObserver(
-            "MiddleButtonReleaseEvent", self.click_mid_button_release_event
-        )
-
-    def click_mid_button_press_event(self, obj, event):
-        int_pos = self.GetInteractor().GetEventPosition()
-
-        self.FindPokedRenderer(int_pos[0], int_pos[1])
-
-        self.is_panning = True
-
-    def click_mid_button_release_event(self, obj, event):
-        self.is_panning = False
+        self.center_of_rotation_actor = self._make_rotation_sphere()
+        self._create_observers()
 
     def set_default_center_of_rotation(self, center):
         self.default_center_of_rotation = center
+    
+    def set_center_of_rotation_actor(self, actor):
+        self.center_of_rotation_actor = actor
 
-    def left_button_press_event(self, obj, event):
+    def _create_observers(self):
+        self.AddObserver("LeftButtonPressEvent", self._left_button_press_event)
+        self.AddObserver("LeftButtonReleaseEvent", self._left_button_release_event)
+        self.AddObserver("RightButtonPressEvent", self._right_button_press_event)
+        self.AddObserver("RightButtonReleaseEvent", self._right_button_release_event)
+        self.AddObserver("MouseMoveEvent", self._mouse_move_event)
+        self.AddObserver("MouseWheelForwardEvent", self._mouse_wheel_forward_event)
+        self.AddObserver("MouseWheelBackwardEvent", self._mouse_wheel_backward_event)
+        self.AddObserver("MiddleButtonPressEvent", self._click_mid_button_press_event)
+        self.AddObserver(
+            "MiddleButtonReleaseEvent", self._click_mid_button_release_event
+        )
+
+    def _left_button_press_event(self, obj, event):
         # Implemented to stop the superclass movement
-        pass
+        self.is_left_clicked = True
 
-    def left_button_release_event(self, obj, event):
+    def _left_button_release_event(self, obj, event):
         # Implemented to stop the superclass movement
-        pass
+        self.is_left_clicked = False
 
-    def right_button_press_event(self, obj, event):
+    def _right_button_press_event(self, obj, event):
+        self.is_right_clicked = True
+        self.is_rotating = True
+
         cursor = self.GetInteractor().GetEventPosition()
         self.FindPokedRenderer(cursor[0], cursor[1])
 
-        self._rightButtonClicked = True
-        self._rotating = True
         renderer = self.GetCurrentRenderer() or self.GetDefaultRenderer()
         camera = renderer.GetActiveCamera()
 
@@ -81,22 +78,32 @@ class InteractorStyleArcballCamera(vtk.vtkInteractorStyleTrackballCamera):
         dx, dy, dz = np.array(camera.GetPosition()) - np.array(camera.GetFocalPoint())
         distance_factor = np.sqrt(dx**2 + dy**2 + dz**2)
 
-        self.sphere_rotation_actor.SetPosition(self.center_of_rotation)
-        self.sphere_rotation_actor.SetScale(
+        self.center_of_rotation_actor.SetPosition(self.center_of_rotation)
+        self.center_of_rotation_actor.SetScale(
             (distance_factor / 3.5, distance_factor / 3.5, distance_factor / 3.5)
         )
-        renderer.AddActor(self.sphere_rotation_actor)
+        renderer.AddActor(self.center_of_rotation_actor)
 
-    def right_button_release_event(self, obj, event):
+    def _right_button_release_event(self, obj, event):
+        self.is_right_clicked = False
+        self.is_rotating = False
         renderer = self.GetDefaultRenderer() or self.GetCurrentRenderer()
-        renderer.RemoveActor(self.sphere_rotation_actor)
+        renderer.RemoveActor(self.center_of_rotation_actor)
         self.GetInteractor().Render()
-        self._rightButtonClicked = False
-        self._rotating = False
         self.EndDolly()
 
-    def mouse_move_event(self, obj, event):
-        if self._rotating:
+    def _click_mid_button_press_event(self, obj, event):
+        self.is_mid_clicked = True
+        self.is_panning = True
+        int_pos = self.GetInteractor().GetEventPosition()
+        self.FindPokedRenderer(int_pos[0], int_pos[1])
+
+    def _click_mid_button_release_event(self, obj, event):
+        self.is_mid_clicked = False
+        self.is_panning = False
+
+    def _mouse_move_event(self, obj, event):
+        if self.is_rotating:
             self.rotate()
 
         if self.is_panning:
@@ -104,7 +111,7 @@ class InteractorStyleArcballCamera(vtk.vtkInteractorStyleTrackballCamera):
 
         self.OnMouseMove()
 
-    def mouse_wheel_forward_event(self, obj, event):
+    def _mouse_wheel_forward_event(self, obj, event):
         int_pos = self.GetInteractor().GetEventPosition()
 
         self.FindPokedRenderer(int_pos[0], int_pos[1])
@@ -121,7 +128,7 @@ class InteractorStyleArcballCamera(vtk.vtkInteractorStyleTrackballCamera):
 
         self.ReleaseFocus()
 
-    def mouse_wheel_backward_event(self, obj, event):
+    def _mouse_wheel_backward_event(self, obj, event):
         int_pos = self.GetInteractor().GetEventPosition()
 
         self.FindPokedRenderer(int_pos[0], int_pos[1])
@@ -252,8 +259,7 @@ class InteractorStyleArcballCamera(vtk.vtkInteractorStyleTrackballCamera):
         scale = view_height / renderer.GetSize()[1]
         return cursor_to_center * scale * (1 - 1 / factor)
 
-    def make_rotation_sphere(self):
-        colors = vtk.vtkNamedColors()
+    def _make_rotation_sphere(self):
         sphereSource = vtk.vtkSphereSource()
         sphereSource.SetRadius(0.01)
         sphereSource.Update()
@@ -261,6 +267,7 @@ class InteractorStyleArcballCamera(vtk.vtkInteractorStyleTrackballCamera):
         mapper = vtk.vtkPolyDataMapper()
         mapper.SetInputData(sphereSource.GetOutput())
 
-        self.sphere_rotation_actor = vtk.vtkActor()
-        self.sphere_rotation_actor.SetMapper(mapper)
-        self.sphere_rotation_actor.GetProperty().SetColor(colors.GetColor3d("blue"))
+        sphere_actor = vtk.vtkActor()
+        sphere_actor.SetMapper(mapper)
+        sphere_actor.GetProperty().SetColor([1,0,0])
+        return sphere_actor
