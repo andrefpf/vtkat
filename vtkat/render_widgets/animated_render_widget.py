@@ -1,7 +1,7 @@
 from threading import Lock
 from time import time
 
-from vtkat.render_widgets import CommonRenderWidget
+from .common_render_widget import CommonRenderWidget
 
 
 class AnimatedRenderWidget(CommonRenderWidget):
