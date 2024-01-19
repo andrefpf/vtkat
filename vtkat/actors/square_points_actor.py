@@ -4,13 +4,13 @@ from vtkat.poly_data import VerticesData
 
 
 class SquarePointsActor(vtk.vtkActor):
-    def __init__(self, points) -> None:
+    def __init__(self, points_list) -> None:
         super().__init__()
-        self.points = points
-        self._create_geometry()
+        self.points_list = points_list
+        self.build()
 
-    def _create_geometry(self):
-        data = VerticesData(self.points)
+    def build(self):
+        data = VerticesData(self.points_list)
         mapper = vtk.vtkPolyDataMapper()
         mapper.SetInputData(data)
         self.SetMapper(mapper)

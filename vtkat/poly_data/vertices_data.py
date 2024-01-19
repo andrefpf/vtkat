@@ -9,10 +9,14 @@ class VerticesData(vtk.vtkPolyData):
     def __init__(self, points_list: list[tuple[int, int, int]]) -> None:
         super().__init__()
 
-        points = vtk.vtkPoints()
-        self.Allocate(len(points_list))
+        self.points_list = points_list
+        self.build()
 
-        for i, (x, y, z) in enumerate(points_list):
+    def build(self):
+        points = vtk.vtkPoints()
+        self.Allocate(len(self.points_list))
+
+        for i, (x, y, z) in enumerate(self.points_list):
             points.InsertNextPoint(x, y, z)
             self.InsertNextCell(vtk.VTK_VERTEX, 1, [i])
 
