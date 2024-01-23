@@ -10,13 +10,15 @@ from vtkat.interactor_styles import ArcballCameraInteractorStyle
 
 class CommonRenderWidget(QFrame):
     """
-    This class is needed show vtk renderers in pyqt.
+    This class is needed to show vtk renderers in pyqt.
 
     A vtk widget must always have a renderer, even if it is empty.
     """
 
     left_clicked = pyqtSignal(int, int)
+    left_released = pyqtSignal(int, int)
     right_clicked = pyqtSignal(int, int)
+    right_released = pyqtSignal(int, int)
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -31,10 +33,16 @@ class CommonRenderWidget(QFrame):
         self.renderer.ResetCamera()
 
         self.render_interactor.AddObserver(
-            "LeftButtonReleaseEvent", self.left_click_event
+            "LeftButtonPressEvent", self.left_click_press_event
         )
         self.render_interactor.AddObserver(
-            "RightButtonReleaseEvent", self.right_click_event
+            "LeftButtonReleaseEvent", self.left_click_release_event
+        )
+        self.render_interactor.AddObserver(
+            "RightButtonPressEvent", self.right_click_press_event
+        )
+        self.render_interactor.AddObserver(
+            "RightButtonReleaseEvent", self.right_click_release_event
         )
 
         layout = QStackedLayout()
@@ -51,13 +59,21 @@ class CommonRenderWidget(QFrame):
         if ren_win is not None:
             ren_win.Render()
 
-    def left_click_event(self, obj, event):
+    def left_click_press_event(self, obj, event):
         x, y, *_ = self.render_interactor.GetEventPosition()
         self.left_clicked.emit(x, y)
 
-    def right_click_event(self, obj, event):
+    def left_click_release_event(self, obj, event):
+        x, y, *_ = self.render_interactor.GetEventPosition()
+        self.left_released.emit(x, y)
+
+    def right_click_press_event(self, obj, event):
         x, y, *_ = self.render_interactor.GetEventPosition()
         self.right_clicked.emit(x, y)
+
+    def right_click_release_event(self, obj, event):
+        x, y, *_ = self.render_interactor.GetEventPosition()
+        self.right_released.emit(x, y)
 
     def get_thumbnail(self):
         image_filter = vtk.vtkWindowToImageFilter()
