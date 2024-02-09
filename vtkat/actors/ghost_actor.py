@@ -2,7 +2,7 @@ import vtk
 
 
 class GhostActor(vtk.vtkActor):
-    def make_ethereal(self):
+    def make_ghost(self):
         self.GetProperty().LightingOff()
         offset = -66000
         mapper = self.GetMapper()
