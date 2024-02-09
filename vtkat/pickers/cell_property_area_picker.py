@@ -12,7 +12,7 @@ class CellPropertyAreaPicker(vtk.vtkPropPicker):
         self._cell_picker = vtk.vtkCellPicker()
         self._area_picker = vtk.vtkAreaPicker()
         self._cell_picker.SetTolerance(0.005)
-    
+
     def pick(self, x: float, y: float, z: float, renderer: vtk.vtkRenderer):
         self._picked.clear()
         self._cell_picker.Pick(x, y, z, renderer)
@@ -33,7 +33,9 @@ class CellPropertyAreaPicker(vtk.vtkPropPicker):
         self._picked.add(property_val)
         return self.get_picked()
 
-    def area_pick(self, x0: float, y0: float, x1: float, y1: float, renderer: vtk.vtkRenderer):
+    def area_pick(
+        self, x0: float, y0: float, x1: float, y1: float, renderer: vtk.vtkRenderer
+    ):
         self._picked.clear()
         self._area_picker.AreaPick(x0, y0, x1, y1, renderer)
         extractor = vtk.vtkExtractSelectedFrustum()
@@ -41,7 +43,7 @@ class CellPropertyAreaPicker(vtk.vtkPropPicker):
 
         if self.desired_actor not in self._area_picker.GetProp3Ds():
             return self.get_picked()
-        
+
         data: vtk.vtkPolyData = self.desired_actor.GetMapper().GetInput()
         if data is None:
             return self.get_picked()
@@ -49,7 +51,6 @@ class CellPropertyAreaPicker(vtk.vtkPropPicker):
         property_array = data.GetCellData().GetArray(self.property_name)
         if property_array is None:
             return self.get_picked()
-
 
         for cell in range(data.GetNumberOfCells()):
             property_val = property_array.GetValue(cell)
@@ -60,7 +61,7 @@ class CellPropertyAreaPicker(vtk.vtkPropPicker):
             if property_val in self._picked:
                 continue
 
-            bounds = [0,0,0,0,0,0]
+            bounds = [0, 0, 0, 0, 0, 0]
             data.GetCellBounds(cell, bounds)
             if extractor.OverallBoundsTest(bounds):
                 self._picked.add(property_val)

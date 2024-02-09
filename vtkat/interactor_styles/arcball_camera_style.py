@@ -26,7 +26,7 @@ class ArcballCameraInteractorStyle(vtk.vtkInteractorStyleTrackballCamera):
 
     def set_default_center_of_rotation(self, center):
         self.default_center_of_rotation = center
-    
+
     def set_cor_actor(self, actor):
         self.cor_actor = actor
 
@@ -263,8 +263,8 @@ class ArcballCameraInteractorStyle(vtk.vtkInteractorStyleTrackballCamera):
         return cursor_to_center * scale * (1 - 1 / factor)
 
     def _make_default_cor_actor(self):
-        actor = RoundPointsActor([(0,0,0)])
+        actor = RoundPointsActor([(0, 0, 0)])
         actor.appear_in_front(True)
-        actor.GetProperty().SetColor(1,0,0)
+        actor.GetProperty().SetColor(1, 0, 0)
         actor.GetProperty().SetPointSize(10)
         return actor

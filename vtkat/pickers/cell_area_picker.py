@@ -1,4 +1,4 @@
-import vtk 
+import vtk
 
 
 class CellAreaPicker(vtk.vtkPropPicker):
@@ -11,13 +11,15 @@ class CellAreaPicker(vtk.vtkPropPicker):
         self._cell_picker = vtk.vtkCellPicker()
         self._area_picker = vtk.vtkAreaPicker()
         self._cell_picker.SetTolerance(0.005)
-    
+
     def pick(self, x: float, y: float, z: float, renderer: vtk.vtkRenderer):
         self._picked.clear()
         self._cell_picker.Pick(x, y, z, renderer)
         self._picked[self._cell_picker.GetActor()] = [self._cell_picker.GetCellId()]
 
-    def area_pick(self, x0: float, y0: float, x1: float, y1: float, renderer: vtk.vtkRenderer):
+    def area_pick(
+        self, x0: float, y0: float, x1: float, y1: float, renderer: vtk.vtkRenderer
+    ):
         self._picked.clear()
         self._area_picker.AreaPick(x0, y0, x1, y1, renderer)
         extractor = vtk.vtkExtractSelectedFrustum()
@@ -33,7 +35,7 @@ class CellAreaPicker(vtk.vtkPropPicker):
 
             cells = []
             for i in range(data.GetNumberOfCells()):
-                bounds = [0,0,0,0,0,0]
+                bounds = [0, 0, 0, 0, 0, 0]
                 data.GetCellBounds(i, bounds)
                 if extractor.OverallBoundsTest(bounds):
                     cells.append(i)

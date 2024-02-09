@@ -9,7 +9,7 @@ class LinesActor(vtk.vtkActor):
         self.lines_list = lines_list
 
         self.build()
-    
+
     def build(self):
         data = LinesData(self.lines_list)
         mapper = vtk.vtkPolyDataMapper()
