@@ -49,6 +49,7 @@ class CommonRenderWidget(QFrame):
         layout.addWidget(self.render_interactor)
         self.setLayout(layout)
 
+        self.create_info_text()
         self.set_theme("dark")
 
     def update_plot(self):
@@ -124,24 +125,24 @@ class CommonRenderWidget(QFrame):
         self.axes.InteractiveOff()
 
     def create_scale_bar(self):
-        self.scale_bar = vtk.vtkLegendScaleActor()
-        self.scale_bar.AllAxesOff()
+        self.scale_bar_actor = vtk.vtkLegendScaleActor()
+        self.scale_bar_actor.AllAxesOff()
 
-        title_property = self.scale_bar.GetLegendTitleProperty()
+        title_property = self.scale_bar_actor.GetLegendTitleProperty()
         title_property.SetFontSize(14)
         title_property.ShadowOff()
         title_property.ItalicOff()
         title_property.SetLineOffset(-35)
         title_property.SetVerticalJustificationToTop()
 
-        label_property = self.scale_bar.GetLegendLabelProperty()
+        label_property = self.scale_bar_actor.GetLegendLabelProperty()
         label_property.SetFontSize(12)
         label_property.ShadowOff()
         label_property.ItalicOff()
         label_property.BoldOff()
         label_property.SetLineOffset(-25)
 
-        self.renderer.AddActor(self.scale_bar)
+        self.renderer.AddActor(self.scale_bar_actor)
 
     def create_color_bar(self, lookup_table=None):
         if lookup_table is None:
@@ -155,25 +156,50 @@ class CommonRenderWidget(QFrame):
         colorbar_label.SetFontSize(12)
         colorbar_label.SetJustificationToLeft()
 
-        self.colorbar = vtk.vtkScalarBarActor()
-        self.colorbar.SetLabelTextProperty(colorbar_label)
-        self.colorbar.SetLookupTable(lookup_table)
-        self.colorbar.SetWidth(0.02)
-        self.colorbar.SetPosition(0.94, 0.07)
-        self.colorbar.SetMaximumNumberOfColors(400)
-        self.colorbar.UnconstrainedFontSizeOn()
-        self.colorbar.SetTextPositionToPrecedeScalarBar()
-        self.renderer.AddActor(self.colorbar)
+        self.colorbar_actor = vtk.vtkScalarBarActor()
+        self.colorbar_actor.SetLabelTextProperty(colorbar_label)
+        self.colorbar_actor.SetLookupTable(lookup_table)
+        self.colorbar_actor.SetWidth(0.02)
+        self.colorbar_actor.SetPosition(0.94, 0.07)
+        self.colorbar_actor.SetMaximumNumberOfColors(400)
+        self.colorbar_actor.UnconstrainedFontSizeOn()
+        self.colorbar_actor.SetTextPositionToPrecedeScalarBar()
+        self.renderer.AddActor(self.colorbar_actor)
+
+    def create_info_text(self):
+        self.info_text_property = vtk.vtkTextProperty()
+        self.info_text_property.SetFontSize(17)
+        self.info_text_property.SetVerticalJustificationToTop()
+        self.info_text_property.SetColor((1,1,1))
+        self.info_text_property.SetLineSpacing(1.5)
+        self.info_text_property.SetFontFamilyToTimes()
+        self.info_text_property.SetFontFamily(vtk.VTK_FONT_FILE)
+        self.info_text_property.SetFontFile("data/fonts/LiberationMono-Bold.ttf")
+
+        self.text_actor = vtk.vtkTextActor()
+        self.text_actor.SetTextProperty(self.info_text_property)
+        self.renderer.AddActor2D(self.text_actor)
+
+        coord = self.text_actor.GetPositionCoordinate()
+        coord.SetCoordinateSystemToNormalizedViewport()
+        coord.SetValue(0.01, 0.95)
+
+    def set_info_text(self, text):
+        self.text_actor.SetInput(text)
 
     def set_theme(self, theme):
         if theme == "dark":
             self.renderer.GradientBackgroundOn()
             self.renderer.SetBackground(0.06, 0.08, 0.12)
             self.renderer.SetBackground2(0, 0, 0)
+            self.info_text_property.SetColor((0.8, 0.8, 0.8))
+
         elif theme == "light":
             self.renderer.GradientBackgroundOn()
             self.renderer.SetBackground(0.5, 0.5, 0.65)
             self.renderer.SetBackground2(1, 1, 1)
+            self.info_text_property.SetColor((0.3, 0.3, 0.3))
+
         else:
             NotImplemented
 
