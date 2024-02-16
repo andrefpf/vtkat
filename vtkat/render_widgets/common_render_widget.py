@@ -171,7 +171,7 @@ class CommonRenderWidget(QFrame):
         self.info_text_property.SetFontSize(17)
         self.info_text_property.SetVerticalJustificationToTop()
         self.info_text_property.SetColor((1,1,1))
-        self.info_text_property.SetLineSpacing(1.5)
+        self.info_text_property.SetLineSpacing(1.2)
         self.info_text_property.SetFontFamilyToTimes()
         self.info_text_property.SetFontFamily(vtk.VTK_FONT_FILE)
         self.info_text_property.SetFontFile("data/fonts/LiberationMono-Bold.ttf")
