@@ -5,6 +5,7 @@ from PyQt5.QtWidgets import QFrame, QStackedLayout
 from vtk.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
 from vtk.util.numpy_support import vtk_to_numpy
 
+from vtkat import VTKAT_DIR
 from vtkat.interactor_styles import ArcballCameraInteractorStyle
 
 
@@ -167,6 +168,8 @@ class CommonRenderWidget(QFrame):
         self.renderer.AddActor(self.colorbar_actor)
 
     def create_info_text(self):
+        font_file = VTKAT_DIR / "fonts/LiberationMono-Bold.ttf"
+
         self.info_text_property = vtk.vtkTextProperty()
         self.info_text_property.SetFontSize(17)
         self.info_text_property.SetVerticalJustificationToTop()
@@ -174,7 +177,7 @@ class CommonRenderWidget(QFrame):
         self.info_text_property.SetLineSpacing(1.2)
         self.info_text_property.SetFontFamilyToTimes()
         self.info_text_property.SetFontFamily(vtk.VTK_FONT_FILE)
-        self.info_text_property.SetFontFile("data/fonts/LiberationMono-Bold.ttf")
+        self.info_text_property.SetFontFile(font_file)
 
         self.text_actor = vtk.vtkTextActor()
         self.text_actor.SetTextProperty(self.info_text_property)
