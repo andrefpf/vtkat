@@ -1,10 +1,9 @@
 import vtk
-from vtkmodules.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
-from vtkmodules.util.numpy_support import vtk_to_numpy
-
 from PIL import Image
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QFrame, QStackedLayout
+from vtkmodules.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
+from vtkmodules.util.numpy_support import vtk_to_numpy
 
 from vtkat import VTKAT_DIR
 from vtkat.interactor_styles import ArcballCameraInteractorStyle
@@ -174,7 +173,7 @@ class CommonRenderWidget(QFrame):
         self.info_text_property = vtk.vtkTextProperty()
         self.info_text_property.SetFontSize(17)
         self.info_text_property.SetVerticalJustificationToTop()
-        self.info_text_property.SetColor((1,1,1))
+        self.info_text_property.SetColor((1, 1, 1))
         self.info_text_property.SetLineSpacing(1.2)
         self.info_text_property.SetFontFamilyToTimes()
         self.info_text_property.SetFontFamily(vtk.VTK_FONT_FILE)
