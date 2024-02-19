@@ -1,9 +1,10 @@
 import vtk
+from vtkmodules.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
+from vtkmodules.util.numpy_support import vtk_to_numpy
+
 from PIL import Image
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QFrame, QStackedLayout
-from vtk.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
-from vtk.util.numpy_support import vtk_to_numpy
 
 from vtkat import VTKAT_DIR
 from vtkat.interactor_styles import ArcballCameraInteractorStyle
