@@ -171,7 +171,7 @@ class CommonRenderWidget(QFrame):
         font_file = VTKAT_DIR / "fonts/LiberationMono-Bold.ttf"
 
         self.info_text_property = vtk.vtkTextProperty()
-        self.info_text_property.SetFontSize(17)
+        self.info_text_property.SetFontSize(14)
         self.info_text_property.SetVerticalJustificationToTop()
         self.info_text_property.SetColor((1, 1, 1))
         self.info_text_property.SetLineSpacing(1.2)
