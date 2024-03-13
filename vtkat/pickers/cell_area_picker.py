@@ -7,16 +7,23 @@ class CellAreaPicker(vtk.vtkPropPicker):
         self._picked_cells = []
         self._picked_actors = []
         self._picked = dict()
+
         self._area_picker = vtk.vtkAreaPicker()
+        self._cell_picker = vtk.vtkCellPicker()
+        self._cell_picker.SetTolerance(0.01)
 
     def pick(self, x: float, y: float, z: float, renderer: vtk.vtkRenderer):
-        # select a small area around the mouse click
-        delta = 10
-        self.area_pick(x-delta, y-delta, x+delta, y+delta, renderer)
+        self._picked.clear()
+        self._cell_picker.Pick(x, y, z, renderer)
+        self._picked[self._cell_picker.GetActor()] = [self._cell_picker.GetCellId()]
 
-        # keep at most a single cell selected for every picked actor
-        for actor, selection in self._picked.items():
-            self._picked[actor] = selection[:1]
+        # # select a small area around the mouse click
+        # delta = 10
+        # self.area_pick(x-delta, y-delta, x+delta, y+delta, renderer)
+
+        # # keep at most a single cell selected for every picked actor
+        # for actor, selection in self._picked.items():
+        #     self._picked[actor] = selection[:1]
 
     def area_pick(
         self, x0: float, y0: float, x1: float, y1: float, renderer: vtk.vtkRenderer
