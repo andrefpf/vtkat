@@ -14,6 +14,8 @@ class CellPropertyAreaPicker(vtk.vtkPropPicker):
         self._cell_picker.SetTolerance(0.005)
 
     def pick(self, x: float, y: float, z: float, renderer: vtk.vtkRenderer):
+        # maybe a behaviour like the one implemented in CellAreaPicker
+        # would fit nicely here
         self._picked.clear()
         self._cell_picker.Pick(x, y, z, renderer)
 
