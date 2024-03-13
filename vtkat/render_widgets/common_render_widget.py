@@ -194,7 +194,7 @@ class CommonRenderWidget(QFrame):
         if theme == "dark":
             self.renderer.GradientBackgroundOn()
             self.renderer.SetBackground(0.06, 0.08, 0.12)
-            self.renderer.SetBackground2(0, 0, 0)
+            self.renderer.SetBackground2(0.9, 0.9, 0.9)
             self.info_text_property.SetColor((0.8, 0.8, 0.8))
 
         elif theme == "light":
