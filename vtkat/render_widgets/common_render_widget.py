@@ -173,7 +173,7 @@ class CommonRenderWidget(QFrame):
         self.info_text_property = vtk.vtkTextProperty()
         self.info_text_property.SetFontSize(14)
         self.info_text_property.SetVerticalJustificationToTop()
-        self.info_text_property.SetColor((1, 1, 1))
+        self.info_text_property.SetColor((0.3, 0.3, 0.3))
         self.info_text_property.SetLineSpacing(1.2)
         self.info_text_property.SetFontFamilyToTimes()
         self.info_text_property.SetFontFamily(vtk.VTK_FONT_FILE)
@@ -195,13 +195,11 @@ class CommonRenderWidget(QFrame):
             self.renderer.GradientBackgroundOn()
             self.renderer.SetBackground(0.06, 0.08, 0.12)
             self.renderer.SetBackground2(0.9, 0.9, 0.9)
-            self.info_text_property.SetColor((0.8, 0.8, 0.8))
 
         elif theme == "light":
             self.renderer.GradientBackgroundOn()
             self.renderer.SetBackground(0.5, 0.5, 0.65)
             self.renderer.SetBackground2(1, 1, 1)
-            self.info_text_property.SetColor((0.3, 0.3, 0.3))
 
         else:
             NotImplemented
