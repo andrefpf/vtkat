@@ -54,7 +54,7 @@ class CellPropertyAreaPicker(vtk.vtkPropPicker):
         if property_array is None:
             return self.get_picked()
     
-        if property_array.GetNumberOfCells() < data.GetNumberOfCells():
+        if property_array.GetNumberOfElements() < data.GetNumberOfCells():
             return self.get_picked()
 
         for cell in range(data.GetNumberOfCells()):
