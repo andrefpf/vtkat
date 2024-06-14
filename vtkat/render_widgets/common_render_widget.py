@@ -148,9 +148,10 @@ class CommonRenderWidget(QFrame):
 
         title_property: vtk.vtkTextProperty
         title_property = self.scale_bar_actor.GetLegendTitleProperty()
-        title_property.SetFontSize(11)
+        title_property.SetFontSize(14)
         title_property.ShadowOff()
         title_property.ItalicOff()
+        title_property.BoldOn()
         title_property.SetLineOffset(-55)
         title_property.SetVerticalJustificationToTop()
         title_property.SetFontFamily(vtk.VTK_FONT_FILE)
@@ -214,7 +215,7 @@ class CommonRenderWidget(QFrame):
         font_file = VTKAT_DIR / "fonts/LiberationMono-Bold.ttf"
 
         self.info_text_property = vtk.vtkTextProperty()
-        self.info_text_property.SetFontSize(12)
+        self.info_text_property.SetFontSize(14)
         self.info_text_property.SetVerticalJustificationToTop()
         self.info_text_property.SetColor((0.2, 0.2, 0.2))
         self.info_text_property.SetLineSpacing(1.2)
