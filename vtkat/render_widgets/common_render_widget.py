@@ -78,7 +78,7 @@ class CommonRenderWidget(QFrame):
         x, y, *_ = self.render_interactor.GetEventPosition()
         self.right_released.emit(x, y)
 
-    def get_thumbnail(self):
+    def get_screenshot(self) -> Image.Image:
         image_filter = vtk.vtkWindowToImageFilter()
         image_filter.SetInput(self.render_interactor.GetRenderWindow())
         image_filter.Update()
@@ -90,7 +90,10 @@ class CommonRenderWidget(QFrame):
 
         array = vtk_to_numpy(vtk_array).reshape(height, width, components)
         image = Image.fromarray(array).transpose(Image.FLIP_TOP_BOTTOM)
+        return image
 
+    def get_thumbnail(self):
+        image = self.get_screenshot()
         size = min(image.width, image.height)
         box = (
             (image.width - size) // 2,
@@ -102,12 +105,9 @@ class CommonRenderWidget(QFrame):
         return image
 
     def save_png(self, path):
-        imageFilter = vtk.vtkWindowToImageFilter()
-        imageFilter.SetInput(self.render_interactor.GetRenderWindow())
-        writer = vtk.vtkPNGWriter()
-        writer.SetFileName(path)
-        writer.SetInputConnection(imageFilter.GetOutputPort())
-        writer.Write()
+        image = self.get_screenshot()
+        with open(path, "w") as file:
+            image.save(file)
 
     def create_axes(self):
         axes_actor = vtk.vtkAxesActor()
