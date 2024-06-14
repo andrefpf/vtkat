@@ -4,6 +4,7 @@ from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QFrame, QStackedLayout
 from vtkmodules.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
 from vtkmodules.util.numpy_support import vtk_to_numpy
+from pathlib import Path
 
 from vtkat import VTKAT_DIR
 from vtkat.interactor_styles import ArcballCameraInteractorStyle
@@ -110,16 +111,30 @@ class CommonRenderWidget(QFrame):
 
     def create_axes(self):
         axes_actor = vtk.vtkAxesActor()
+        axes_actor.SetTipTypeToSphere()
+
+        axes_actor.SetXAxisLabelText(" X")
+        axes_actor.SetYAxisLabelText(" Y")
+        axes_actor.SetZAxisLabelText(" Z")
+
+        axes_actor.GetXAxisShaftProperty().LightingOff()
+        axes_actor.GetYAxisShaftProperty().LightingOff()
+        axes_actor.GetZAxisShaftProperty().LightingOff()
+        axes_actor.GetXAxisTipProperty().LightingOff()
+        axes_actor.GetYAxisTipProperty().LightingOff()
+        axes_actor.GetZAxisTipProperty().LightingOff()     
 
         x_property = axes_actor.GetXAxisCaptionActor2D().GetCaptionTextProperty()
         y_property = axes_actor.GetYAxisCaptionActor2D().GetCaptionTextProperty()
         z_property = axes_actor.GetZAxisCaptionActor2D().GetCaptionTextProperty()
 
-        for i in [x_property, y_property, z_property]:
-            i.ItalicOff()
-            i.BoldOff()
+        for text_property in [x_property, y_property, z_property]:
+            text_property: vtk.vtkTextProperty
+            text_property.ItalicOff()
+            text_property.BoldOn()
 
         self.axes = vtk.vtkOrientationMarkerWidget()
+        self.axes.SetViewport(0, 0, 0.18, 0.18)
         self.axes.SetOrientationMarker(axes_actor)
         self.axes.SetInteractor(self.render_interactor)
         self.axes.EnabledOn()
@@ -129,19 +144,28 @@ class CommonRenderWidget(QFrame):
         self.scale_bar_actor = vtk.vtkLegendScaleActor()
         self.scale_bar_actor.AllAxesOff()
 
+        font_file = VTKAT_DIR / "fonts/LiberationMono-Bold.ttf"
+
+        title_property: vtk.vtkTextProperty
         title_property = self.scale_bar_actor.GetLegendTitleProperty()
-        title_property.SetFontSize(14)
+        title_property.SetFontSize(11)
         title_property.ShadowOff()
         title_property.ItalicOff()
-        title_property.SetLineOffset(-35)
+        title_property.SetLineOffset(-55)
         title_property.SetVerticalJustificationToTop()
+        title_property.SetFontFamily(vtk.VTK_FONT_FILE)
+        title_property.SetFontFile(font_file)
 
+        label_property: vtk.vtkTextProperty
         label_property = self.scale_bar_actor.GetLegendLabelProperty()
-        label_property.SetFontSize(12)
+        label_property.SetFontSize(10)
+        label_property.SetColor((0.8, 0.8, 0.8))
         label_property.ShadowOff()
         label_property.ItalicOff()
         label_property.BoldOff()
-        label_property.SetLineOffset(-25)
+        label_property.SetLineOffset(-35)
+        label_property.SetFontFamily(vtk.VTK_FONT_FILE)
+        label_property.SetFontFile(font_file)
 
         self.renderer.AddActor(self.scale_bar_actor)
 
@@ -150,19 +174,38 @@ class CommonRenderWidget(QFrame):
             lookup_table = vtk.vtkLookupTable()
             lookup_table.Build()
 
+        font_file = VTKAT_DIR / "fonts/LiberationMono-Bold.ttf"
+
+        colorbar_title = vtk.vtkTextProperty()
+        colorbar_title.ShadowOff()
+        colorbar_title.ItalicOff()
+        colorbar_title.BoldOn()
+        colorbar_title.SetFontSize(13)
+        colorbar_title.SetColor((0.8, 0.8, 0.8))
+        colorbar_title.SetJustificationToLeft()
+        colorbar_title.SetFontFamily(vtk.VTK_FONT_FILE)
+        colorbar_title.SetFontFile(font_file)
+
         colorbar_label = vtk.vtkTextProperty()
         colorbar_label.ShadowOff()
         colorbar_label.ItalicOff()
         colorbar_label.BoldOn()
         colorbar_label.SetFontSize(12)
+        colorbar_label.SetColor((0.8, 0.8, 0.8))
         colorbar_label.SetJustificationToLeft()
+        colorbar_label.SetFontFamily(vtk.VTK_FONT_FILE)
+        colorbar_label.SetFontFile(font_file)
 
         self.colorbar_actor = vtk.vtkScalarBarActor()
+        self.colorbar_actor.SetTitleTextProperty(colorbar_title)
         self.colorbar_actor.SetLabelTextProperty(colorbar_label)
+        self.colorbar_actor.SetLabelFormat("%1.0e ")
         self.colorbar_actor.SetLookupTable(lookup_table)
         self.colorbar_actor.SetWidth(0.02)
-        self.colorbar_actor.SetPosition(0.94, 0.07)
+        self.colorbar_actor.SetPosition(0.94, 0.17)
+        self.colorbar_actor.SetHeight(0.7)
         self.colorbar_actor.SetMaximumNumberOfColors(400)
+        self.colorbar_actor.SetVerticalTitleSeparation(20)
         self.colorbar_actor.UnconstrainedFontSizeOn()
         self.colorbar_actor.SetTextPositionToPrecedeScalarBar()
         self.renderer.AddActor(self.colorbar_actor)
@@ -171,9 +214,9 @@ class CommonRenderWidget(QFrame):
         font_file = VTKAT_DIR / "fonts/LiberationMono-Bold.ttf"
 
         self.info_text_property = vtk.vtkTextProperty()
-        self.info_text_property.SetFontSize(14)
+        self.info_text_property.SetFontSize(12)
         self.info_text_property.SetVerticalJustificationToTop()
-        self.info_text_property.SetColor((0.3, 0.3, 0.3))
+        self.info_text_property.SetColor((0.2, 0.2, 0.2))
         self.info_text_property.SetLineSpacing(1.2)
         self.info_text_property.SetFontFamilyToTimes()
         self.info_text_property.SetFontFamily(vtk.VTK_FONT_FILE)
@@ -187,6 +230,23 @@ class CommonRenderWidget(QFrame):
         coord.SetCoordinateSystemToNormalizedViewport()
         coord.SetValue(0.01, 0.95)
 
+    def create_logo(self, path: str | Path) -> vtk.vtkLogoRepresentation:
+        path = Path(path)
+
+        image_reader = vtk.vtkPNGReader()
+        image_reader.SetFileName(path)
+        image_reader.Update()
+
+        logo = vtk.vtkLogoRepresentation()
+        logo.SetImage(image_reader.GetOutput())
+        logo.ProportionalResizeOn()
+        logo.GetImageProperty().SetOpacity(0.9)
+        logo.GetImageProperty().SetDisplayLocationToBackground()
+
+        self.renderer.AddViewProp(logo)
+        logo.SetRenderer(self.renderer)
+        return logo
+
     def set_info_text(self, text):
         self.text_actor.SetInput(text)
 
@@ -194,7 +254,7 @@ class CommonRenderWidget(QFrame):
         if theme == "dark":
             self.renderer.GradientBackgroundOn()
             self.renderer.SetBackground(0.06, 0.08, 0.12)
-            self.renderer.SetBackground2(0.9, 0.9, 0.9)
+            self.renderer.SetBackground2(0.7, 0.7, 0.75)
 
         elif theme == "light":
             self.renderer.GradientBackgroundOn()
