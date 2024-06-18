@@ -248,6 +248,12 @@ class CommonRenderWidget(QFrame):
         logo.SetRenderer(self.renderer)
         return logo
 
+    def create_camera_light(self, offset_x=0, offset_y=0):
+        light = vtk.vtkLight()
+        light.SetLightTypeToCameraLight()
+        light.SetPosition(offset_x, offset_y, 1)
+        self.renderer.AddLight(light)
+
     def set_info_text(self, text):
         self.text_actor.SetInput(text)
 
