@@ -253,3 +253,14 @@ class CommonRenderWidget(QFrame):
         position = (x + 1, y + 1, z + 1)
         view_up = (0, 1, 0)
         self.set_custom_view(position, view_up)
+
+    def copy_camera_from(self, other):
+        if isinstance(other, CommonRenderWidget):
+            other_camera = other.renderer.GetActiveCamera() 
+        elif isinstance(other, vtk.vtkRenderer):
+            other_camera = other.GetActiveCamera() 
+        else:
+            return
+
+        self.renderer.GetActiveCamera().DeepCopy(other_camera)
+        self.update()
