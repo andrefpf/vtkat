@@ -17,7 +17,13 @@ class AnimatedRenderWidget(CommonRenderWidget):
         self._animation_timer = self.render_interactor.CreateRepeatingTimer(500)
         self.render_interactor.AddObserver("TimerEvent", self._animation_callback)
 
-    def start_animation(self):
+    def start_animation(self, fps=None, frames=None):
+        if isinstance(fps, int | float):
+            self._animation_fps = fps
+        
+        if isinstance(frames, int):
+            self._animation_total_frames = frames
+
         if self.playing_animation:
             return
 
@@ -41,8 +47,8 @@ class AnimatedRenderWidget(CommonRenderWidget):
         if not self.playing_animation:
             return
 
-        # If the time to update the frame takes
-        # longer than expected
+        # Wait the rendering of the last frame
+        # before starting a new one
         if self._animation_lock.locked():
             return
 
@@ -59,7 +65,7 @@ class AnimatedRenderWidget(CommonRenderWidget):
             self.update_animation(self._animation_frame)
             self._animation_last_time = time()
 
-    def update_animation(self, frame):
+    def update_animation(self, frame: int):
         raise NotImplementedError(
             'The function "update_animation" was not implemented!'
         )

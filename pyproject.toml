@@ -6,7 +6,7 @@ authors = ["André Fernandes <fpf.andre@gmail.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = ">=3.10"
+python = ">=3.10,<3.12"
 vtk = "^9.3.0"
 pyqt5-qt5 = "5.15.2"
 pyqt5 = "^5.15.10"
