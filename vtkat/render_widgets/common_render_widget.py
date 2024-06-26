@@ -330,4 +330,5 @@ class CommonRenderWidget(QFrame):
             return
 
         self.renderer.GetActiveCamera().DeepCopy(other_camera)
+        self.renderer.ResetCameraClippingRange()
         self.update()
