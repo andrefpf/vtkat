@@ -37,6 +37,12 @@ class AnimatedRenderWidget(CommonRenderWidget):
             return
 
         self.playing_animation = False
+    
+    def toggle_animation(self):
+        if self.playing_animation:
+            self.stop_animation()
+        else:
+            self.start_animation()
 
     def _animation_callback(self, obj, event):
         """
